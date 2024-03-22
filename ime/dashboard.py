@@ -1,18 +1,26 @@
 import dash
-from dash import dcc, html, Input, Output
+from dash import dcc, html, Input, Output, dash
 import plotly.graph_objs as go
 import pandas as pd
 import os
+import warnings
+warnings.filterwarnings("ignore")
 
-# 你的CSV文件所在的目录
-directory = r"IV_TEST/20240304"
+# pyinstaller --onefile --add-data "C:\Users\94723\OneDrive\work\Vscode\ime\IV_TEST;." dashboard.py
+# CSV文件所在的目录
+
+current_dir = os.getcwd()
+directory = os.path.join(current_dir, 'IV_TEST')
 
 # 创建Dash应用
 app = dash.Dash(__name__)
+app.title = 'JT---CSV-TO-PLOT'
 
 # 获取CSV文件列表
-csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
-
+# csv_files = [f for f in os.listdir(directory) if f.endswith('.csv')]
+csv_files = [os.path.join(dirpath, f)
+             for dirpath, dirnames, files in os.walk(directory)
+             for f in files if f.endswith('.csv')]
 # 应用布局
 app.layout = html.Div([
     dcc.Dropdown(
@@ -47,4 +55,4 @@ def update_graph(selected_file):
     return fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=False)
